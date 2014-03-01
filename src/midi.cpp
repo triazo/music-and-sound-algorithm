@@ -8,50 +8,15 @@
 #include <fstream>
 
 void usage(char* argv[]);
-// void encodeVarint(int value, char* output, uint8_t* outputSizePtr);
 
 void makeTrack(char* track, int& bytes);
+
 void channelEvent(char*& event, int& bytes,
-									int deltatime, int type, int channel, int p1, int  p2) {
-
-	// Determine the number of bytes, by bitshifting the deltatime, and
-	// adding a constant three for the rest of it.
-	bytes = 0;
-	if (deltatime == 0) {
-		bytes = 1;
-	}
-	else {
-		int delTemp = deltatime;
-		while (delTemp != 0) {
-			delTemp >>= 7;
-			bytes++;
-		}
-	}
-	bytes += 3;
-
-	// Allocate the event and fill it with data.
-	char* data = new char[bytes];
-	event = data;
-	int count = 0;
-	while (deltatime > 127) {
-		// This only works because x86 is little endian...
-		event[count] = ((char)(deltatime & 127)) | 128;
-		deltatime >>= 7;
-		count++;
-	}
-	// TODO: check that the result is big-endian
-	event[count] = ((char)deltatime) & 127;
-
-	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
-	event[bytes-2] = (char)p1;
-	event[bytes-1] = (char)p2;
-	
-}
-
+									int deltatime, int type, int channel, int p1, int  p2);
 
 int main(int argc, char* argv[]) {
-  // Open file in binary mode.  Currently hard-coded
     
+  // Open file in binary mode.  Currently hard-coded
   if (argc < 2) {
 		usage(argv);
 		exit(1);
@@ -111,9 +76,7 @@ int main(int argc, char* argv[]) {
 							 0, 7, 15, 47, 0);
 	midifile.write(eotEvent, eotEventSize);
 	delete eotEvent;
-	
-	
-	
+		
 }
 
 
@@ -121,47 +84,45 @@ void usage (char* argv[]) {
   std::cout << "Usage: " << argv[0] << " outfile" << std::endl;
 }
 
-// void encodeVarint(int value, char* output, int& outputSize) {
-// 	int outputSize = 0;
-// 	// While more than 7 bits of data are left, occupy the last output byte
-// 	// and set the next byte flag
-// 	while (value > 127) {
-// 		// |128: Set the next byte flag
-// 		output[outputSize] = ((char)(value & 127)) | 128;
-// 		// Remove the seven bits we just wrote
-// 		value >>= 7;
-// 		outputSize++;
-// 	}
-// 	output[outputSize++] = ((char)value) & 127;
-// 	*outputSizePtr = outputSize;
-// }
 
-// void channelEvent(char*& event, int& bytes,
-// 									int deltatime, int type, int channel, int p1, int  p2) {
+void channelEvent(char*& event, int& bytes,
+									int deltatime, int type, int channel, int p1, int  p2) { 
 
-// 	// Determine the number of bytes, by bitshifting the deltatime, and
-// 	// adding a constant three for the rest of it.
-// 	bytes = 0;
-// 	int delTemp = deltatime;
-// 	while (delTemp != 0) {
-// 		delTemp >>= 7;
-// 		bytes++;
-// 	}
-// 	bytes += 3;
+	// Deltatime is a variable width integer - seven bits with the
+	// largest specifying if the next byte is used.
+	
+	// Determine the number of bytes, by bitshifting the deltatime, and
+	// adding a constant three for the rest of it.
+	bytes = 0;
+	if (deltatime == 0) {
+		bytes = 1;
+	}
+	else {
+		int delTemp = deltatime;
+		while (delTemp != 0) {
+			delTemp >>= 7;
+			bytes++;
+		}
+	}
+	bytes += 3;
 
-// 	// Allocate the event and fill it with data.
-// 	event = new char[bytes];
-// 	int count = 0;
-// 	while (deltatime > 127) {
-// 		// This only works because x86 is little endian...
-// 		event[count] = ((char)(deltatime & 127)) | 128;
-// 		deltatime >>= 7;
-// 		count++;
-// 	}
-// 	// TODO: check that the result is big-endian
-// 	event[count] = ((char)deltatime) & 127;
+	// Allocate the event and fill it with data.
+	event = new char[bytes];
+	int count = 0;
+	while (deltatime > 127) {
+		// x86 is little endian.  The Least significant bits are inserted first.
+		// Deltatimes over 127 will fail.
+		event[count] = ((char)(deltatime & 127)) | 128;
+		deltatime >>= 7;
+		count++;
+	}
+	// TODO: check that the result has the correct encoding across multible bytes
+	// (should be big-endian)
+	event[count] = ((char)deltatime) & 127;
 
-// 	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel << 4);
-// 	event[bytes-2] = (char)p1;
-// 	event[bytes-1] = (char)p2;
-// }
+	// 
+	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
+	event[bytes-2] = (char)p1;
+	event[bytes-1] = (char)p2;
+	
+}
