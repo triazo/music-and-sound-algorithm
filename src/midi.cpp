@@ -50,8 +50,7 @@ int main(int argc, char* argv[]) {
 	// Output a sample size (should be eight for this example)
 	int trackLength = htobe32(12);
 	midifile.write((char*)& trackLength, 4);
-	
-	// Generate and write the first event.
+ 	// Generate and write the first event.
 	char* event1;
 	int event1Size;
 	channelEvent(event1, event1Size,
@@ -109,18 +108,17 @@ void channelEvent(char*& event, int& bytes,
 	// Allocate the event and fill it with data.
 	event = new char[bytes];
 	int count = 0;
-	while (deltatime > 127) {
-		// x86 is little endian.  The Least significant bits are inserted first.
-		// Deltatimes over 127 will fail.
-		event[count] = ((char)(deltatime & 127)) | 128;
+	// Go through the first iteration differently because of the different bitmask.
+	event[bytes-4] = ((char)(deltatime & 127));
+	count++;
+	deltatime >>= 7;
+	while (deltatime != 0) {
+		event[bytes-4-count] = ((char)(deltatime & 127)) | 128;
 		deltatime >>= 7;
 		count++;
 	}
-	// TODO: check that the result has the correct encoding across multible bytes
-	// (should be big-endian)
-	event[count] = ((char)deltatime) & 127;
 
-	// 
+	// Put the other data in the event.
 	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
 	event[bytes-2] = (char)p1;
 	event[bytes-1] = (char)p2;
