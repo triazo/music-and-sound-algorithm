@@ -15,8 +15,7 @@ void usage(char* argv[]);
 
 void makeTrack(char* track, int& bytes);
 
-void channelEvent(char*& event, int& bytes,
-									int deltatime, int type, int channel, int p1, int  p2);
+void channelEvent(char*& event, int& bytes, int deltatime, int type, int channel, int p1, int  p2);
 
 int main(int argc, char* argv[]) {
     
@@ -33,10 +32,12 @@ int main(int argc, char* argv[]) {
 	midifile.write("MThd",4);
 	// Length of 6
 	int length = htobe32(6);
+    // Tricking the compiler to typecast the length (previous line) to char array
 	midifile.write((char*)&length, 4);
 	
 	// 0 means one track
 	short tracktype = htobe16(0);
+    // Tricking the compiler again...won't label further tricks
 	midifile.write((char*)& tracktype, 2);
 	
 	// Number of tracks (if tracktype == 0, must be 1)
@@ -57,16 +58,14 @@ int main(int argc, char* argv[]) {
  	// Generate and write the first event.
 	char* event1;
 	int event1Size;
-	channelEvent(event1, event1Size,
-							 0, 1, 0, 64, 64);
+	channelEvent(event1, event1Size, 0, 1, 0, 64, 64);
 	midifile.write(event1, event1Size);
 	delete event1;
 	
 	// Generate and write the second event.
 	char* event2;
 	int event2Size;
-	channelEvent(event2, event2Size,
-							 64, 0, 0, 64, 64);
+	channelEvent(event2, event2Size, 64, 0, 0, 64, 64);
 	midifile.write(event2, event2Size);
 	delete event2;
 
@@ -75,8 +74,7 @@ int main(int argc, char* argv[]) {
 	int eotEventSize;
 	// Quick hack: type 8 and track 15 makes a meta event.
 	// The rest of the fields match in length.
-	channelEvent(eotEvent, eotEventSize,
-							 0, 7, 15, 47, 0);
+	channelEvent(eotEvent, eotEventSize, 0, 7, 15, 47, 0);
 	midifile.write(eotEvent, eotEventSize);
 	delete eotEvent;
 		
@@ -88,8 +86,7 @@ void usage (char* argv[]) {
 }
 
 
-void channelEvent(char*& event, int& bytes,
-									int deltatime, int type, int channel, int p1, int  p2) { 
+void channelEvent(char*& event, int& bytes, int deltatime, int type, int channel, int p1, int  p2) { 
 
 	// Deltatime is a variable width integer - seven bits with the
 	// largest specifying if the next byte is used.
@@ -124,6 +121,7 @@ void channelEvent(char*& event, int& bytes,
 
 	// Put the other data in the event.
 	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
+    // Set the note's tone (if this event is a note)
 	event[bytes-2] = (char)p1;
 	event[bytes-1] = (char)p2;
 	
