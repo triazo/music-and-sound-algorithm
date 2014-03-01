@@ -3,9 +3,13 @@
 // A test file for writing midi.
 
 #include <cstdlib>
-#include <endian.h>
 #include <iostream>
 #include <fstream>
+#if defined(OS_MACOSX)
+#include "endian.h"
+#else
+#include <endian.h>
+#endif
 
 void usage(char* argv[]);
 
