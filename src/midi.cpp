@@ -6,9 +6,9 @@
 #include <iostream>
 #include <fstream>
 #if defined(OS_MACOSX)
-#include "endian.h"
-#else
 #include <endian.h>
+#else
+#include "endian.h"
 #endif
 
 void usage(char* argv[]);

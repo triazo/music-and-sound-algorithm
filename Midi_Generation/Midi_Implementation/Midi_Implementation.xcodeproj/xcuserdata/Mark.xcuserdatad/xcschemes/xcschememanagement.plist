@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Markov Algorithm.xcscheme</key>
+		<key>Midi_Implementation.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>4D19198B18C1953C00D530CE</key>
+		<key>4DA19D1A18D65A9C0012720F</key>
 		<dict>
 			<key>primary</key>
 			<true/>

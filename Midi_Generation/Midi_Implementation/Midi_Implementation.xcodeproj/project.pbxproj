@@ -7,34 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D19199018C1953C00D530CE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D19198F18C1953C00D530CE /* main.cpp */; };
-		4D19199218C1953C00D530CE /* Markov_Algorithm.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4D19199118C1953C00D530CE /* Markov_Algorithm.1 */; };
-		4D1D5F8718C2585600C3B932 /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D1D5F8518C2585600C3B932 /* event.cpp */; };
+		4DA19D1F18D65A9C0012720F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DA19D1E18D65A9C0012720F /* main.cpp */; };
+		4DA19D2118D65A9C0012720F /* Midi_Implementation.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4DA19D2018D65A9C0012720F /* Midi_Implementation.1 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4D19198A18C1953C00D530CE /* CopyFiles */ = {
+		4DA19D1918D65A9C0012720F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				4D19199218C1953C00D530CE /* Markov_Algorithm.1 in CopyFiles */,
+				4DA19D2118D65A9C0012720F /* Midi_Implementation.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4D19198C18C1953C00D530CE /* Markov Algorithm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Markov Algorithm"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D19198F18C1953C00D530CE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		4D19199118C1953C00D530CE /* Markov_Algorithm.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Markov_Algorithm.1; sourceTree = "<group>"; };
-		4D1D5F8518C2585600C3B932 /* event.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = event.cpp; sourceTree = SOURCE_ROOT; };
-		4D1D5F8618C2585600C3B932 /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = SOURCE_ROOT; };
+		4DA19D1B18D65A9C0012720F /* Midi_Implementation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Midi_Implementation; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DA19D1E18D65A9C0012720F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		4DA19D2018D65A9C0012720F /* Midi_Implementation.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Midi_Implementation.1; sourceTree = "<group>"; };
+		4DA19D2B18D65B710012720F /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		4DA19D2C18D65B710012720F /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4D19198918C1953C00D530CE /* Frameworks */ = {
+		4DA19D1818D65A9C0012720F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -44,93 +43,92 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4D19198318C1953C00D530CE = {
+		4DA19D1218D65A9C0012720F = {
 			isa = PBXGroup;
 			children = (
-				4D19198E18C1953C00D530CE /* Markov Algorithm */,
-				4D19198D18C1953C00D530CE /* Products */,
+				4DA19D1D18D65A9C0012720F /* Midi_Implementation */,
+				4DA19D1C18D65A9C0012720F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		4D19198D18C1953C00D530CE /* Products */ = {
+		4DA19D1C18D65A9C0012720F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4D19198C18C1953C00D530CE /* Markov Algorithm */,
+				4DA19D1B18D65A9C0012720F /* Midi_Implementation */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4D19198E18C1953C00D530CE /* Markov Algorithm */ = {
+		4DA19D1D18D65A9C0012720F /* Midi_Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				4D19198F18C1953C00D530CE /* main.cpp */,
-				4D1D5F8518C2585600C3B932 /* event.cpp */,
-				4D1D5F8618C2585600C3B932 /* event.h */,
-				4D19199118C1953C00D530CE /* Markov_Algorithm.1 */,
+				4DA19D1E18D65A9C0012720F /* main.cpp */,
+				4DA19D2B18D65B710012720F /* endian.h */,
+				4DA19D2C18D65B710012720F /* event.h */,
+				4DA19D2018D65A9C0012720F /* Midi_Implementation.1 */,
 			);
-			path = "Markov Algorithm";
+			path = Midi_Implementation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4D19198B18C1953C00D530CE /* Markov Algorithm */ = {
+		4DA19D1A18D65A9C0012720F /* Midi_Implementation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4D19199518C1953C00D530CE /* Build configuration list for PBXNativeTarget "Markov Algorithm" */;
+			buildConfigurationList = 4DA19D2418D65A9C0012720F /* Build configuration list for PBXNativeTarget "Midi_Implementation" */;
 			buildPhases = (
-				4D19198818C1953C00D530CE /* Sources */,
-				4D19198918C1953C00D530CE /* Frameworks */,
-				4D19198A18C1953C00D530CE /* CopyFiles */,
+				4DA19D1718D65A9C0012720F /* Sources */,
+				4DA19D1818D65A9C0012720F /* Frameworks */,
+				4DA19D1918D65A9C0012720F /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "Markov Algorithm";
-			productName = "Markov Algorithm";
-			productReference = 4D19198C18C1953C00D530CE /* Markov Algorithm */;
+			name = Midi_Implementation;
+			productName = Midi_Implementation;
+			productReference = 4DA19D1B18D65A9C0012720F /* Midi_Implementation */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		4D19198418C1953C00D530CE /* Project object */ = {
+		4DA19D1318D65A9C0012720F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Mark P. Blanco";
 			};
-			buildConfigurationList = 4D19198718C1953C00D530CE /* Build configuration list for PBXProject "Markov Algorithm" */;
+			buildConfigurationList = 4DA19D1618D65A9C0012720F /* Build configuration list for PBXProject "Midi_Implementation" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 4D19198318C1953C00D530CE;
-			productRefGroup = 4D19198D18C1953C00D530CE /* Products */;
+			mainGroup = 4DA19D1218D65A9C0012720F;
+			productRefGroup = 4DA19D1C18D65A9C0012720F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4D19198B18C1953C00D530CE /* Markov Algorithm */,
+				4DA19D1A18D65A9C0012720F /* Midi_Implementation */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4D19198818C1953C00D530CE /* Sources */ = {
+		4DA19D1718D65A9C0012720F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D19199018C1953C00D530CE /* main.cpp in Sources */,
-				4D1D5F8718C2585600C3B932 /* event.cpp in Sources */,
+				4DA19D1F18D65A9C0012720F /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		4D19199318C1953C00D530CE /* Debug */ = {
+		4DA19D2218D65A9C0012720F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -163,7 +161,7 @@
 			};
 			name = Debug;
 		};
-		4D19199418C1953C00D530CE /* Release */ = {
+		4DA19D2318D65A9C0012720F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -189,14 +187,14 @@
 			};
 			name = Release;
 		};
-		4D19199618C1953C00D530CE /* Debug */ = {
+		4DA19D2518D65A9C0012720F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		4D19199718C1953C00D530CE /* Release */ = {
+		4DA19D2618D65A9C0012720F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -206,25 +204,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4D19198718C1953C00D530CE /* Build configuration list for PBXProject "Markov Algorithm" */ = {
+		4DA19D1618D65A9C0012720F /* Build configuration list for PBXProject "Midi_Implementation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4D19199318C1953C00D530CE /* Debug */,
-				4D19199418C1953C00D530CE /* Release */,
+				4DA19D2218D65A9C0012720F /* Debug */,
+				4DA19D2318D65A9C0012720F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4D19199518C1953C00D530CE /* Build configuration list for PBXNativeTarget "Markov Algorithm" */ = {
+		4DA19D2418D65A9C0012720F /* Build configuration list for PBXNativeTarget "Midi_Implementation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4D19199618C1953C00D530CE /* Debug */,
-				4D19199718C1953C00D530CE /* Release */,
+				4DA19D2518D65A9C0012720F /* Debug */,
+				4DA19D2618D65A9C0012720F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 4D19198418C1953C00D530CE /* Project object */;
+	rootObject = 4DA19D1318D65A9C0012720F /* Project object */;
 }

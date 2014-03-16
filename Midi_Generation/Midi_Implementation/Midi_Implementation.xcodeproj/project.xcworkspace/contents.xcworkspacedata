@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Markov Algorithm.xcodeproj">
+      location = "self:Midi_Implementation.xcodeproj">
    </FileRef>
 </Workspace>

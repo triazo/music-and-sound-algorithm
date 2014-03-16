@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4D19198B18C1953C00D530CE"
-               BuildableName = "Markov Algorithm"
-               BlueprintName = "Markov Algorithm"
-               ReferencedContainer = "container:Markov Algorithm.xcodeproj">
+               BlueprintIdentifier = "4DA19D1A18D65A9C0012720F"
+               BuildableName = "Midi_Implementation"
+               BlueprintName = "Midi_Implementation"
+               ReferencedContainer = "container:Midi_Implementation.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4D19198B18C1953C00D530CE"
-            BuildableName = "Markov Algorithm"
-            BlueprintName = "Markov Algorithm"
-            ReferencedContainer = "container:Markov Algorithm.xcodeproj">
+            BlueprintIdentifier = "4DA19D1A18D65A9C0012720F"
+            BuildableName = "Midi_Implementation"
+            BlueprintName = "Midi_Implementation"
+            ReferencedContainer = "container:Midi_Implementation.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -51,10 +51,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4D19198B18C1953C00D530CE"
-            BuildableName = "Markov Algorithm"
-            BlueprintName = "Markov Algorithm"
-            ReferencedContainer = "container:Markov Algorithm.xcodeproj">
+            BlueprintIdentifier = "4DA19D1A18D65A9C0012720F"
+            BuildableName = "Midi_Implementation"
+            BlueprintName = "Midi_Implementation"
+            ReferencedContainer = "container:Midi_Implementation.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -69,10 +69,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4D19198B18C1953C00D530CE"
-            BuildableName = "Markov Algorithm"
-            BlueprintName = "Markov Algorithm"
-            ReferencedContainer = "container:Markov Algorithm.xcodeproj">
+            BlueprintIdentifier = "4DA19D1A18D65A9C0012720F"
+            BuildableName = "Midi_Implementation"
+            BlueprintName = "Midi_Implementation"
+            ReferencedContainer = "container:Midi_Implementation.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
