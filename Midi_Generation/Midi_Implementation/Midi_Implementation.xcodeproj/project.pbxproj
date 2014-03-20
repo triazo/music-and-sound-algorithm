@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D8C8A3718DA675A00162C40 /* Event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8C8A3618DA675A00162C40 /* Event.cpp */; };
+		4D8C8A3C18DA74E400162C40 /* mchain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D8C8A3A18DA74E400162C40 /* mchain.cpp */; };
 		4DA19D1F18D65A9C0012720F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4DA19D1E18D65A9C0012720F /* main.cpp */; };
 		4DA19D2118D65A9C0012720F /* Midi_Implementation.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4DA19D2018D65A9C0012720F /* Midi_Implementation.1 */; };
 /* End PBXBuildFile section */
@@ -25,11 +27,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4D8C8A3618DA675A00162C40 /* Event.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Event.cpp; sourceTree = "<group>"; };
+		4D8C8A3818DA6C3200162C40 /* Event.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		4D8C8A3918DA6C4900162C40 /* functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = functions.h; sourceTree = "<group>"; };
+		4D8C8A3A18DA74E400162C40 /* mchain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mchain.cpp; sourceTree = "<group>"; };
+		4D8C8A3B18DA74E400162C40 /* mchain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mchain.h; sourceTree = "<group>"; };
 		4DA19D1B18D65A9C0012720F /* Midi_Implementation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Midi_Implementation; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DA19D1E18D65A9C0012720F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4DA19D2018D65A9C0012720F /* Midi_Implementation.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Midi_Implementation.1; sourceTree = "<group>"; };
 		4DA19D2B18D65B710012720F /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
-		4DA19D2C18D65B710012720F /* event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = event.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,9 +68,13 @@
 		4DA19D1D18D65A9C0012720F /* Midi_Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				4D8C8A3618DA675A00162C40 /* Event.cpp */,
 				4DA19D1E18D65A9C0012720F /* main.cpp */,
+				4D8C8A3A18DA74E400162C40 /* mchain.cpp */,
+				4D8C8A3B18DA74E400162C40 /* mchain.h */,
 				4DA19D2B18D65B710012720F /* endian.h */,
-				4DA19D2C18D65B710012720F /* event.h */,
+				4D8C8A3818DA6C3200162C40 /* Event.h */,
+				4D8C8A3918DA6C4900162C40 /* functions.h */,
 				4DA19D2018D65A9C0012720F /* Midi_Implementation.1 */,
 			);
 			path = Midi_Implementation;
@@ -122,6 +132,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4DA19D1F18D65A9C0012720F /* main.cpp in Sources */,
+				4D8C8A3718DA675A00162C40 /* Event.cpp in Sources */,
+				4D8C8A3C18DA74E400162C40 /* mchain.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +232,7 @@
 				4DA19D2618D65A9C0012720F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,82 +1,54 @@
 //
-//  event.h
-//  Markov Algorithm
+//  Event.h
+//  Midi_Implementation
 //
-//  Created by Mark P. Blanco on 3/1/14.
+//  Created by Mark P. Blanco on 3/19/14.
 //  Copyright (c) 2014 Mark P. Blanco. All rights reserved.
 //
 
-#include <iostream>
-#include <fstream>
+#ifndef Midi_Implementation_Event_h
+#define Midi_Implementation_Event_h
+
+//Will use vector of events to store midi and track data, it will all be "compiled" at the end of runtime
 #include <string>
-#if defined(OS_MACOSX)
-#include <endian.h>
-#else
-#include "endian.h"
-#endif
 
-// bytes is referenced size of event
-// deltatime_ticks is number of ticks before event is executed
-// type is type of event
-// channel is channel event should be played on
-// p1 and p2 are note values, if it's a note
+using namespace std;
 
-// Prototypes:
-void makeTrack(int& bytes, std::ofstream& midifile);
-void channelEvent(int deltatime_ticks, int type, int channel, int p1, int  p2, std::ofstream& midifile);
-void addDeltime(int& bytes, char*& event, int deltatime);
-void MetaEvent();// Not yet implemented
-
-// Definitions:
-void makeTrack(int& bytes, std::ofstream& midifile){
-    // Start the Track
-	midifile.write("MTrk", 4);
-    // Output a sample size (should be eight for this example)
-    int trackLength = htobe32(12);
-    midifile.write((char*)& trackLength, 4);
-}
-
-
-void channelEvent(int deltatime_ticks, int type, int channel, int p1, int  p2, std::ofstream& midifile){
-    char* event = NULL;
-    int bytes;
-    addDeltime(bytes, event, deltatime_ticks);
-	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
-	event[bytes-2] = (char)p1;
-	event[bytes-1] = (char)p2;
-    midifile.write(event, bytes);
-    delete event;
-}
-
-void addDeltime(int& bytes, char*& event, int deltatime){
-    // Get the correct size in bytes of the event
-    bytes = 0;
-	if (deltatime == 0) {
-		bytes = 1;
-	}
-	else {
-		int delTemp = deltatime;
-		while (delTemp != 0) {
-			delTemp >>= 7;
-			bytes++;
-		}
-	}
-	bytes += 3;
+class Event{
+public:
+    Event(int deltime, int channel_number, int type);
     
-    // Allocate the event and begin filling it with data.
-	event = new char[bytes];
-    int count = 0;
-    // Go through the first iteration differently because of the different bitmask.
-	event[bytes-4] = ((char)(deltatime & 127));
-	count++;
-	deltatime >>= 7;
-	while (deltatime != 0) {
-		event[bytes-4-count] = ((char)(deltatime & 127)) | 128;
-		deltatime >>= 7;
-		count++;
-	}
-}
+//private:
+    int deltime; //Note that this will be of variable length when converted to hex
+    int channel_number;
+    int type;
+    
+};
 
-void MetaEvent(){
-    // Incomplete
-}
+class chanEvent: public Event{
+public:
+    chanEvent(int note_number, int note_velocity, int deltime, int channel_number, int type);
+    
+//private:
+    int note_number;//Note number
+    int note_velocity;//Volume
+    
+};
+
+class metaEvent: public Event{
+public:
+    metaEvent(int deltime, int channel_number, int type /*And more args...*/);//Write several constructors, the first of which can be the end of track file
+    
+private:
+    int length;
+};
+
+
+class endofTrack: public Event{
+public:
+    endofTrack(int deltime, int channel_number, int type, int p1, int p2)
+        : Event(deltime, channel_number, type), p1(p1), p2(p2) {}
+//private:
+    int p1, p2;
+};
+#endif

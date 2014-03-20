@@ -10,9 +10,7 @@
 #include "functions.h"
 #include <cstdlib>
 #include <fstream>
-#include <cstdlib>
 #include "Event.h"
-#include "mchain.h"
 #if defined(OS_MACOSX)
 #include <endian.h>
 #else
@@ -22,18 +20,14 @@
 // Hard-Coded Midi Generation
 void usage(char* argv[]);
 
-void compile_track(const vector<chanEvent> & track, ofstream & midifile);
-
 int main(int argc, char* argv[]) {
     
     // Open file in binary mode.  Currently hard-coded
-    if (argc < 3) {
+    if (argc < 2) {
 		usage(argv);
 		exit(1);
 	}
-    // Pass name of markov file to constructor, and parse
-    MChain markov_chain(argv[2]);
-    
+	
     // Make midifile out-stream to write to
 	std::ofstream midifile(argv[1], std::ios::out | std::ios::binary);
 	midifile.seekp (0);
@@ -52,7 +46,7 @@ int main(int argc, char* argv[]) {
     bool valid = false;
     short tracktype;
     short trackcount;
-    unsigned int pos_int = 0;
+    unsigned int pos_int;
     while (!valid){
         if (track_type_string == "single"){
             valid = true;
@@ -92,22 +86,32 @@ int main(int argc, char* argv[]) {
     
     // Make the tracks, with their events:
 	for (int num_tracks = 0; num_tracks <= pos_int; num_tracks++){
-        vector<chanEvent> track;
-        markov_chain.runChain(track, markov_chain.getMaxNotes());
-        int length = 4 * track.size() + 4;
-        makeTrack(length, midifile);
-        compile_track(track, midifile);
+        bool eot_event = false;
+        while (!eot_event){
+            int choice;
+            std::cout << "Enter 0 for a track event and 1 for end of track: " << std::endl;
+            std::cin >> choice;
+            if (choice == 0){
+                int bytes;
+                int deltatime;
+                int type;
+                int channel;
+                int p1;
+                int p2;
+                makeTrack(bytes, midifile);
+                std::cout << "Please enter deltatime to precede event, followed by type, channel, and two note values:" << std::endl;
+                std::cin >> deltatime >> type >> channel >> p1 >> p2;
+                channelEvent(deltatime, type, channel, p1, p2, midifile);
+            }
+            else {
+                MetaEvent(midifile);
+                eot_event = true;
+            }
+        }
     }
     midifile.close();
 }
 
-void compile_track(const vector<chanEvent> & track, ofstream & midifile){
-    for (int i = 0; i < track.size(); i++){
-        channelEvent(track[i].deltime, track[i].type, track[i].channel_number, track[i].note_number, track[i].note_velocity, midifile);
-    }
-    MetaEvent(midifile);
-}
-
 void usage (char* argv[]) {
-    std::cout << "Usage: " << argv[0] << " out_file " << "markov_file" << std::endl;
+    std::cout << "Usage: " << argv[0] << " outfile" << std::endl;
 }
