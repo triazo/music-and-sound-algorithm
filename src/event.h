@@ -1,5 +1,5 @@
 //
-//  Event.h
+//  event.h
 //  Midi_Implementation
 //
 //  Created by Mark P. Blanco on 3/19/14.
@@ -37,7 +37,8 @@ public:
 
 class metaEvent: public Event{
 public:
-    metaEvent(int deltime, int channel_number, int type /*And more args...*/);//Write several constructors, the first of which can be the end of track file
+    metaEvent(int deltime, int channel_number, int type /*And more args...*/);
+//Write several constructors, the first of which can be the end of track file
     
 private:
     int length;

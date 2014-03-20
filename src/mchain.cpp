@@ -19,7 +19,7 @@ void MChain::runChain(vector<chanEvent> & track, int limit){
     Vertex* current = getVertex(start_note);
     for (int i = 0; i < limit; i++){
         track.push_back(chanEvent(current->note, current->velocity, 0, 0, 1));                   // Begin the note
-        track.push_back(chanEvent(current->note, current->velocity, current->duration, 0, 1));   // End the note
+        track.push_back(chanEvent(current->note, current->velocity, current->duration, 0, 0));   // End the note
         int loc = rand() % current->prob.size();
         current = current->adj[loc];
     }

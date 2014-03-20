@@ -1,0 +1,36 @@
+\documentclass [12pt]{article}
+
+\usepackage{amstext, amsmath, amssymb}
+
+% Borders
+\addtolength{\oddsidemargin}{-1.0in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
+\begin {document}
+
+\title {Algorithms to Generate Compositions in Baroque or Classical Style}
+\author {Adam Freeman & Mark Blanco}
+\maketitle
+
+For the final project, we are algorithmically generating music. So
+far, we have been focusing on building a library that will allow us to
+state markov chains with relative ease, and to convert them to a midi
+file.  Without using any external libraries (the midi file is written
+directly using the file specification and low level C++ programming),
+we have abstracted over midi events to allow for relatively easy
+creation of midi files. We then created a markov chain interpreter
+that goes through the inputted markov chain and chooses the next node
+depending on inputted probabilities, and creates a midi file.
+
+Currently the implementation is not perfect -- the midi files have
+some inconsistencies don't necessarily work on all systems (they
+generally do on the system that they were created on).  After this,
+the next step is to finish fixing bugs in the implementation, then onto
+tailoring the Markov chain design to sound less random and more like
+pleasant classical music.
+
+\end {document}
+

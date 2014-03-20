@@ -2,13 +2,14 @@
 // -*-c++-mode-*-
 // Header file for the Markov chain class
 
+#include <cstdlib>
 #include <vector>
 #include <string>
 #include <map>
 #include <iostream>
 #include <fstream>
 
-#include "Event.h"
+#include "event.h"
 
 class Vertex {
 public:
