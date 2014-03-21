@@ -30,7 +30,7 @@ void MetaEvent(std::ofstream& midifile);// Not yet implemented
 // Definitions:
 void makeTrack(int& bytes, std::ofstream& midifile){
     // Start the Track
-	midifile.write("MTrk", 4);
+    midifile.write("MTrk", 4);
     // Output a sample size (number of bytes)
     int trackLength = htobe32(bytes);
     midifile.write((char*)& trackLength, 4);
@@ -41,9 +41,9 @@ void channelEvent(int deltatime_ticks, int type, int channel, int p1, int  p2, s
     char* event = NULL;
     int bytes;
     addDeltime(bytes, event, deltatime_ticks);
-	event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
-	event[bytes-2] = (char)p1;
-	event[bytes-1] = (char)p2;
+    event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel);
+    event[bytes-2] = (char)p1;
+    event[bytes-1] = (char)p2;
     midifile.write(event, bytes);
     delete event;
 }
@@ -51,30 +51,30 @@ void channelEvent(int deltatime_ticks, int type, int channel, int p1, int  p2, s
 void addDeltime(int& bytes, char*& event, int deltatime){
     // Get the correct size in bytes of the event
     bytes = 0;
-	if (deltatime == 0) {
-		bytes = 1;
-	}
-	else {
-		int delTemp = deltatime;
-		while (delTemp != 0) {
-			delTemp >>= 7;
-			bytes++;
-		}
-	}
-	bytes += 3;
-    
+    if (deltatime == 0) {
+        bytes = 1;
+    }
+    else {
+        int delTemp = deltatime;
+        while (delTemp != 0) {
+            delTemp >>= 7;
+            bytes++;
+        }
+    }
+    bytes += 3;
+
     // Allocate the event and begin filling it with data.
-	event = new char[bytes];
+    event = new char[bytes];
     int count = 0;
     // Go through the first iteration differently because of the different bitmask.
-	event[bytes-4] = ((char)(deltatime & 127));
-	count++;
-	deltatime >>= 7;
-	while (deltatime != 0) {
-		event[bytes-4-count] = ((char)(deltatime & 127)) | 128;
-		deltatime >>= 7;
-		count++;
-	}
+    event[bytes-4] = ((char)(deltatime & 127));
+    count++;
+    deltatime >>= 7;
+    while (deltatime != 0) {
+        event[bytes-4-count] = ((char)(deltatime & 127)) | 128;
+        deltatime >>= 7;
+        count++;
+    }
 }
 
 void MetaEvent(std::ofstream& midifile){
