@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <cstdlib>
+#include <ctime>
 #include "event.h"
 #include "mchain.h"
 #if defined(OS_MACOSX)

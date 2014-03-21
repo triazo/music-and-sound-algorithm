@@ -16,6 +16,8 @@ Vertex* MChain::getVertex(const std::string& vert) {
 }
 
 void MChain::runChain(vector<chanEvent> & track, int limit){
+    // Set the seed rand() will use.
+    srand(time(NULL));
     Vertex* current = getVertex(start_note);
     for (int i = 0; i < limit; i++){
 
@@ -39,7 +41,6 @@ void MChain::runChain(vector<chanEvent> & track, int limit){
 		
 		current = current->adj[loc];
     }
-    //track.push_back(endofTrack(0, 15, 8, 47, 0));
 }
 
 void MChain::addVertex(const std::string& name,
