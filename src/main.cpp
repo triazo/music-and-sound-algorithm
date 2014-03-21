@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <cstdlib>
+#include <ctime>
 #include "event.h"
 #include "mchain.h"
 #if defined(OS_MACOSX)
@@ -25,7 +26,8 @@ void usage(char* argv[]);
 void compile_track(const vector<chanEvent> & track, ofstream & midifile);
 
 int main(int argc, char* argv[]) {
-
+    // Set the seed rand() will use.
+    srand(tine(NULL));
     // Open file in binary mode.  Currently hard-coded
     if (argc < 3) {
         usage(argv);

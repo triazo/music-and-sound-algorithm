@@ -23,7 +23,6 @@ void MChain::runChain(vector<chanEvent> & track, int limit){
         int loc = rand() % current->prob.size();
         current = current->adj[loc];
     }
-    //track.push_back(endofTrack(0, 15, 8, 47, 0));
 }
 
 void MChain::addVertex(const std::string& name,
