@@ -27,7 +27,7 @@ void compile_track(const vector<chanEvent> & track, ofstream & midifile);
 
 int main(int argc, char* argv[]) {
     // Set the seed rand() will use.
-    srand(tine(NULL));
+    srand(time(NULL));
     // Open file in binary mode.  Currently hard-coded
     if (argc < 3) {
         usage(argv);
