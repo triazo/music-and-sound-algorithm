@@ -18,10 +18,26 @@ Vertex* MChain::getVertex(const std::string& vert) {
 void MChain::runChain(vector<chanEvent> & track, int limit){
     Vertex* current = getVertex(start_note);
     for (int i = 0; i < limit; i++){
+
+		// Add the current note to the future midi vertex.
         track.push_back(chanEvent(current->note, current->velocity, 0, 0, 1));                   // Begin the note
         track.push_back(chanEvent(current->note, current->velocity, current->duration, 0, 0));   // End the note
-        int loc = rand() % current->prob.size();
-        current = current->adj[loc];
+
+		// Randomly choose the next vertex
+
+		// New array
+		std::vector<int> v(current->prob.size(),0);
+		v[0] = current->prob[0];
+		for (int i = 1; i < v.size(); i++) 
+			v[i] = v[i-1] + current->prob[i];
+
+		// March up the array until the random number is found
+		int weightedloc = rand() % v[v.size()-1];
+		int loc = 0;
+		while (weightedloc > v[loc])
+			loc++;
+		
+		current = current->adj[loc];
     }
     //track.push_back(endofTrack(0, 15, 8, 47, 0));
 }
