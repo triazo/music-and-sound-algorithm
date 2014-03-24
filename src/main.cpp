@@ -7,7 +7,6 @@
 #include <iostream>
 #include <list>
 #include <vector>
-#include "functions.h"
 #include <cstdlib>
 #include <fstream>
 #include <cstdlib>
@@ -24,6 +23,7 @@
 void usage(char* argv[]);
 
 void compile_track(const vector<chanEvent> & track, ofstream & midifile);
+void makeTrack(int& bytes, std::ofstream& midifile);
 
 int main(int argc, char* argv[]) {
 
@@ -95,7 +95,10 @@ int main(int argc, char* argv[]) {
     for (int num_tracks = 0; num_tracks <= pos_int; num_tracks++){
         vector<chanEvent> track;
         markov_chain.runChain(track, markov_chain.getMaxNotes());
-        int length = 4 * track.size() + 4;
+        int length = 0;
+        for (int i = 0; i < track.size(); i++)
+            length += track[i].getBytes();
+        length += 4;
         makeTrack(length, midifile);
         compile_track(track, midifile);
     }
@@ -104,10 +107,22 @@ int main(int argc, char* argv[]) {
 
 void compile_track(const vector<chanEvent> & track, ofstream & midifile){
     for (int i = 0; i < track.size(); i++){
-        channelEvent(track[i].deltime, track[i].type, track[i].channel_number, track[i].note_number, track[i].note_velocity, midifile);
+        //channelEvent(track[i].deltime, track[i].type, track[i].channel_number, track[i].note_number, track[i].note_velocity, midifile);
+        midifile.write(track[i].getMidi(),track[i].getBytes());
     }
-    MetaEvent(midifile);
+    int endOfTrack = 0x00FF2F00;
+    midifile.write((char*)&endOfTrack,4);
+    // MetaEvent(midifile);
 }
+
+void makeTrack(int& bytes, std::ofstream& midifile){
+    // Start the Track
+    midifile.write("MTrk", 4);
+    // Output a sample size (number of bytes)
+    int trackLength = htobe32(bytes);
+    midifile.write((char*)& trackLength, 4);
+}
+
 
 void usage (char* argv[]) {
     std::cout << "Usage: " << argv[0] << " out_file " << "markov_file" << std::endl;
