@@ -39,6 +39,7 @@ void MChain::runChain(vector<chanEvent> & track, int limit){
         while (weightedloc > v[loc])
             loc++;
 
+        // current->adj[loc]->parent = current;
         current = current->adj[loc];
     }
 }

@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
 void compile_track(const vector<chanEvent> & track, ofstream & midifile){
     for (int i = 0; i < track.size(); i++){
         //channelEvent(track[i].deltime, track[i].type, track[i].channel_number, track[i].note_number, track[i].note_velocity, midifile);
-        midifile.write(track[i].getMidi(),track[i].getBytes());
+        midifile.write(track[i].getMidi().c_str(),track[i].getBytes());
     }
     int endOfTrack = 0x00FF2F00;
     midifile.write((char*)&endOfTrack,4);

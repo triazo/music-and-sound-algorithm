@@ -15,8 +15,9 @@ class Vertex {
 public:
 Vertex(const std::string & nme, int nt, int dr, int vt):
     name(nme),note(nt),duration(dr),velocity(vt) {}
-
+    
 // Representation
+    Vertex* parent;
     std::vector<Vertex*> adj;   // Vector of pointers to adjacent/connected vertices
     std::vector<int>     prob;  // Probability values corresponding to adjacent locations
     std::string          name;  // Human-readable name of note. Because we're human.

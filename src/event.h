@@ -12,15 +12,13 @@
 // Will use vector of events to store midi and track data, it will all
 // be "compiled" at the end of runtime 
 #include <string>
-#include <iostream>
-#include <iomanip>  
 
 using namespace std;
 
 class Event{
 public:
     Event(int deltime, int channel_number, int type);
-    char* getMidi() const {return "";}
+    std::string getMidi() const {return "";}
     int getBytes() const {return 0;}
 
     int deltime; //Note that this will be of variable length when converted to hex
@@ -32,7 +30,7 @@ public:
 class chanEvent: public Event{
 public:
     chanEvent(int note_number, int note_velocity, int deltime, int channel_number, int type);
-    char* getMidi() const;
+    std::string getMidi() const;
     int getBytes() const;
 
     int note_number;

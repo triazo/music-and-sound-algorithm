@@ -8,6 +8,7 @@
 
 #include "event.h"
 
+
 Event::Event(int deltime, int channel_number, int type)
     : deltime(deltime), channel_number(channel_number), type(type) {}
 
@@ -17,10 +18,10 @@ chanEvent::chanEvent(int note_number, int note_velocity, int deltime, int channe
 metaEvent::metaEvent(int deltime, int channel_number, int type)
     : Event(deltime, channel_number, type) {}
 
-char* chanEvent::getMidi() const {
-    std::cout << "deltime: "        << std::setw(2) << deltime
-              << " note_number: "   << note_number
-              << " note_velocity: " << note_velocity;
+std::string chanEvent::getMidi() const {
+    // std::cout << "deltime: "        << std::setw(2) << deltime
+    //           << " note_number: "   << note_number
+    //           << " note_velocity: " << note_velocity;
 
     int bytes = 0;
     int deltatime = deltime;
@@ -36,10 +37,8 @@ char* chanEvent::getMidi() const {
     }
     bytes += 3;
 
-    //std::cout << " Bytes: " << bytes;
-
     // Allocate the event and begin filling it with data.
-    char event[bytes];
+    std::string event(bytes, ' ');
     int count = 0;
     // Go through the first iteration differently because of the different bitmask.
     event[bytes-4] = ((char)(deltatime & 127));
@@ -54,7 +53,7 @@ char* chanEvent::getMidi() const {
     event[bytes-3] = ((char)(type + 8) << 4) | ((char)channel_number);
     event[bytes-2] = (char)note_number;
     event[bytes-1] = (char)note_velocity;
-    std::cout << " Hex: " << hex << (long int)event << std::endl;
+    // std::cout << " Hex: " << hex << (long int)event << std::endl;
     return event;
 }
 int chanEvent::getBytes() const {
