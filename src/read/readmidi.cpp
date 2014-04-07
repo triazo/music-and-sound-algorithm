@@ -38,22 +38,12 @@ int main(int argc, char** argv) {
 
     // Begin the reading in of the file
     char head[4];
-    // for (int i = 0; i < 4; i++)
-    //     midifile >> head[i];
     midifile.read(head, 4);
 
-    // int tmp = 0;
-
-    // tmp = be32toh(*(inv`t*)head);
-    // foot = (char*)&tmp;
-    char* proper = (char*)"MThd";
-    int* input = (int*)head;
-    int* prop = (int*)proper;
-
     // Error checking.  May be useful down the road.
-    if (*input != *prop) {
+    if (*(int*)head != *(int*)"MThd") {
         std::cerr << "Inproper midi header (first 4 bytes). Got: " 
-                  <<  std::hex << *input << " Expected: " << std::hex << *prop << std::endl;
+                  <<  std::hex << *(int*)head << " Expected: " << std::hex << *(int*)"MThd" << std::endl;
         usage(argv);
         exit(1);
     }
@@ -110,7 +100,7 @@ void readtrack(std::ifstream& midifile, std::list<Event*>& events) {
     char head[4];
     midifile.read(head, 4);
 
-    if (head != "MTrk") {
+    if (*(int*)head != *(int*)"MTrk") {
         std::cerr << "Improper track header" << std::endl;
         exit(1);
     }
@@ -119,6 +109,44 @@ void readtrack(std::ifstream& midifile, std::list<Event*>& events) {
     midifile.read(head, 4);
 
     int tracksize = be32toh(*(int*)head);
-    char track[tracksize];
-    midifile.read(track, tracksize);
+    // char track[tracksize];
+    // midifile.read(track, tracksize);n
+
+    // Start the event loop
+    int trackread = 0;
+    while (trackread < tracksize) {
+        
+        // Loop for deltatime
+        int deltime = 0;
+        char c = 0;
+        midifile.read(&c, 1);
+        trackread++;
+        // In the case of the first bit being zero, this will not enter the loop
+        while (c > 127) {
+            deltime <<= 7;
+            deltime = deltime | (c & 127);
+            midifile.read(&c, 1);
+            trackread++;
+        }
+        
+        
+        // Event type and channel number are both a single nyble
+        midifile.read(&c, 1);
+        trackread++;
+        int eventtype = (c & 240) >> 4;
+        int channel = (c & 15);
+        
+        // Note number and velocity are a whole byte
+        midifile.read(&c, 1);
+        trackread++;
+        int notenumber = c;
+        midifile.read(&c, 1);
+        trackread++;
+        int velocity = c;
+
+        Event* event = new chanEvent(notenumber, velocity, deltime, channel, eventtype - 8);
+        events.push_back(event);
+        
+    }
+    
 }
