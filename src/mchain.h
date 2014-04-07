@@ -32,7 +32,7 @@ public:
     MChain(const std::string& file);
     ~MChain();
     int getMaxNotes() const { return max_notes; }
-    void runChain(vector<chanEvent> & track, int limit);    // Run the chain, with a limit on the number of notes to add
+    void runChain(vector<chanEvent> & track, int limit, int track);    // Run the chain, with a limit on the number of notes to add
     void addVertex(const std::string& name, int note, int duration, int velocity);  // Add the dots...
     void addEdge(const std::string& from, const std::string& to, int prob);         // Connect the dots!
 private:
@@ -41,4 +41,5 @@ private:
     std::vector<Vertex*> allVertices;
     std::string start_note;
     int max_notes;
+    std::vector<Vertex*> starting_notes;       // Starting notes for successive tracks
 };

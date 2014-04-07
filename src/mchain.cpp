@@ -15,10 +15,8 @@ Vertex* MChain::getVertex(const std::string& vert) {
     return (*itr).second;
 }
 
-void MChain::runChain(vector<chanEvent> & track, int limit){
-    // Set the seed rand() will use.
-    srand(time(NULL));
-    Vertex* current = getVertex(start_note);
+void MChain::runChain(vector<chanEvent> & track, int limit, int track_num){
+    Vertex* current = starting_notes[track_num];
     for (int i = 0; i < limit; i++){
 
         // Add the current note to the future midi vertex.
@@ -75,14 +73,18 @@ MChain::MChain(const std::string& file) {
 
     // Read in the inital verticies
     std::string noteName;
-    int note, duration, velocity;
+    int note, duration, velocity, num_starts;
     while (true) {
         inFile >> noteName;
         if (noteName == "STARTLINKS") break;
         inFile >> note >> duration >> velocity;
         addVertex(noteName, note, duration, velocity);
     }
-    inFile >> start_note;
+    inFile >> num_starts;
+    for (int i = 0; i < num_starts; i++){
+        inFile >> noteName;
+        starting_notes.push_back(getVertex(noteName));
+    }
     inFile >> max_notes;
     std::string from, to;
     int probability;
