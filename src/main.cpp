@@ -26,6 +26,9 @@ void compile_track(const vector<chanEvent> & track, ofstream & midifile);
 void makeTrack(int& bytes, std::ofstream& midifile);
 
 int main(int argc, char* argv[]) {
+    
+    // Set the seed rand() will use.
+    srand(time(NULL));
 
     // Open file in binary mode.  Currently hard-coded
     if (argc < 3) {
@@ -94,7 +97,7 @@ int main(int argc, char* argv[]) {
     // Make the tracks, with their events:
     for (int num_tracks = 0; num_tracks <= pos_int; num_tracks++){
         vector<chanEvent> track;
-        markov_chain.runChain(track, markov_chain.getMaxNotes());
+        markov_chain.runChain(track, markov_chain.getMaxNotes(), num_tracks);
         int length = 0;
         for (int i = 0; i < track.size(); i++)
             length += track[i].getBytes();

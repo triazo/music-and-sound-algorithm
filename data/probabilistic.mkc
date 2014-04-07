@@ -1,0 +1,81 @@
+C 60 64 50
+D 62 64 50
+E 64 64 50
+F 65 64 50
+G 67 64 50
+A 57 64 50
+B 59 64 50
+A2 69 64 50
+
+STARTLINKS 2 A E 100
+
+C C 1
+C D 10
+C E 1
+C F 1
+C G 1
+C A 1
+C B 1
+C A2 1
+
+D C 1
+D D 1
+D E 10
+D F 1
+D G 1
+D A 1
+D B 1
+D A2 1
+
+E C 1
+E D 1
+E E 1
+E F 10
+E G 1
+E A 15
+E B 1
+E A2 15
+
+F C 1
+F D 1
+F E 1
+F F 1
+F G 10
+F A 1
+F B 1
+F A2 1
+
+G C 1
+G D 1
+G E 1
+G F 1
+G G 1
+G A 1
+G B 1
+G A2 10
+
+A C 5
+A D 1
+A E 15
+A F 1
+A G 1
+A A 1
+A B 10
+A A2 4
+
+B C 10
+B D 1
+B E 1
+B F 1
+B G 1
+B A 1
+B B 1
+B A2 1
+
+A2 A 10
+A2 B 1
+A2 C 1
+A2 D 1
+A2 E 15
+A2 F 1
+A2 G 1
