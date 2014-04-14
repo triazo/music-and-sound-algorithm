@@ -12,6 +12,7 @@
 // Will use vector of events to store midi and track data, it will all
 // be "compiled" at the end of runtime 
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ public:
     int deltime; //Note that this will be of variable length when converted to hex
     int channel_number;
     int type;
-
+    
 };
 
 class chanEvent: public Event{

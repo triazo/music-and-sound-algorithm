@@ -198,10 +198,10 @@ void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) 
             midifile.read(buf, datasize);
             trackread += datasize;
 
-            if (type = 47); {
+            if (type = 47) {
                 out << "EOT -1 -1 -1" << std::endl;
             }
-            gelse std::cerr << "Ignoring Meta Event: type="
+            else std::cerr << "Ignoring Meta Event: type="
                            << type
                            << ", size=" << datasize
                            << ", data=" << string_to_hex(buf,datasize) << std::endl;
