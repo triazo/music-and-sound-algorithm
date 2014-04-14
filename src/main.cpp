@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     bool valid = false;
     short tracktype;
     short trackcount;
-    unsigned int pos_int = 0;
+    unsigned int pos_int = 1;
     while (!valid){
         if (track_type_string == "single"){
             valid = true;
@@ -95,7 +95,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Ticks per quarter note has been set to a default value of 64" << std::endl;
 
     // Make the tracks, with their events:
-    for (int num_tracks = 0; num_tracks <= pos_int; num_tracks++){
+    for (int num_tracks = 0; num_tracks < pos_int; num_tracks++){
+        std::cout << "Running chain..." << endl;
         vector<chanEvent> track;
         markov_chain.runChain(track, markov_chain.getMaxNotes(), num_tracks);
         int length = 0;
