@@ -1,11 +1,3 @@
-// -----------------------------------------------------------------
-// HOMEWORK 7 WORD FREQUENCY MAPS
-//
-// You may use all of, some of, or none of the provided code below.
-// You may edit it as you like (provided you follow the homework
-// instructions).
-// -----------------------------------------------------------------
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -21,8 +13,8 @@
 typedef std::map<Note, Pint> BuildingBlock;
 
 // Function prototypes:
-std::vector<Note> runMarkovChain(BuildingBlock& data_head, std::list<Note> seed_phrase, const string& mode);
-Note getNextNote(BuildingBlock& data_head, std::list<Note> seed_phrase, const string& mode);
+std::vector<Note> runMarkovChain(BuildingBlock& data_head, int order, const string& mode);
+Note getNextNote(BuildingBlock& data_head, std::list<Note> seed_phrase, int order);
 void add_to_data_head(const std::list<std::string>& words, BuildingBlock& data_head);
 void LoadNotes(BuildingBlock& data_head, const std::string &filename, int window);
 void recursively_destroy(BuildingBlock* data_pointer);
@@ -46,7 +38,7 @@ void add_to_data_head(const std::list<Note>& notes, BuildingBlock& data_head){
     }
 }
 
-void LoadNotes(BuildingBlock& data_head, const std::string &filename, int window, const std::string &parse_method) {
+void LoadNotes(BuildingBlock& data_head, const std::string &filename, int window) {
     // open the file stream, check for errors:
     std::ifstream istr(filename.c_str());
     if (!istr) {
@@ -60,13 +52,13 @@ void LoadNotes(BuildingBlock& data_head, const std::string &filename, int window
     
     // Read in the note data:
     std::list<Note> notes_in_window;
-    sd::string name;
+    std::string name;
     int note, duration, velocity;
-    while (std::cin << name << note << duration << velocity){
+    while (std::cin >> name >> note >> duration >> velocity){
         notes_in_window.push_back(Note(name, note, duration, velocity));
         if (notes_in_window.size() == window){
             add_to_data_head(notes_in_window, data_head);
-            words_in_window.pop_front();
+            notes_in_window.pop_front();
         }
     }
     while (notes_in_window.size() != 0){// This loop adds the notes at the end of the file (the last window-1 words)
@@ -75,31 +67,90 @@ void LoadNotes(BuildingBlock& data_head, const std::string &filename, int window
     }
 }
 
-std::std::vector<Note> runMarkovChain(BuildingBlock& data_head, std::list<Note> seed_phrase, const string& mode){
+std::vector<Note> runMarkovChain(BuildingBlock& data_head, int order, const string& mode){
     std::vector<Note> track_notes;
+    std::list<Note> seed_phrase;// This list will hold the notes that are the lookup keys to be followed before getting the next note
+    BuildingBlock::iterator itr = data_head.begin();
+    std::vector<Note> notes_by_weight;
+    for (; itr != data_head.end(); itr++){
+        for (int i = 0; i < (*itr).second.second; i++){
+            notes_by_weight.push_back((*itr).first);
+        }
+    }
+    MTRand mtrand_autoseed;
+    int random = mtrand_autoseed.randInt(notes_by_weight.size()-1);
+    for (int i = 0; i < random; i++){
+        seed_phrase.push_back(notes_by_weight[i]);
+    }
     for (std::list<Note>::iterator itr = seed_phrase.begin(); itr != seed_phrase.end(); itr++){
         track_notes.push_back(*itr);
     }
-    Note end_of_file_event();// DEFINE END OF TRACK HERE!!!
-    while ((*track_notes.rbegin()) != end_of_file_event){// ADD END OF TRACK DETECTION HERE!!!
-        track_notes.push_back(getNextNote(BuildingBlock& data_head, std::list<Note> seed_phrase, const string& mode));
+    while ((*track_notes.rbegin()).name != "EOT" && (*track_notes.rbegin()).note != -1 &&
+           (*track_notes.rbegin()).velocity != -1 && (*track_notes.rbegin()).duration != -1){
+        track_notes.push_back(getNextNote(data_head, seed_phrase, order));
     }
+    track_notes.pop_back();// get rid of the eot marker
+    return track_notes;
 }
 
-int main (int argc, char* argv) {
+Note getNextNote(BuildingBlock& data_head, std::list<Note> seed_phrase, int order){
+    std::list<Note>::iterator itr = seed_phrase.begin();
+    BuildingBlock::iterator m_itr;
+    BuildingBlock* ptr = &data_head;
+    while(itr != seed_phrase.end()){    // This while loop positions ptr to point at the level from which new notes will be drawn
+        if (ptr == NULL){               // (e.g if there are two starting notes, the notes will come from level three) <--'
+            std::cerr << "That's too many levels! Too many notes for the number of levels!" << std::endl;
+            std::exit(1);
+        }
+        m_itr = ptr->find(*itr);        //Look for the current note of the seed phrase in the current level, set m_itr to that map entry
+        if (m_itr == ptr->end()){
+            std::cerr << "Note not found for the progression: " << std::endl;
+            std::exit(1);
+        }
+        ptr = m_itr->second.first;      // Point to the next map (level) in the progression
+        itr++;                          // Move to the next word in the phrase list
+    }
+    if (ptr == NULL){                   // If there are no more maps after the current one, then there are
+        std::cerr << "No more notes! Can't return one!" << std::endl;// no more notes, so none can be found
+        std::exit(1);
+    }
+    // Random word choosing:
+    std::vector<Note> notes_by_weight; // Vector of notes to which next notes will be added by weight
+    m_itr = ptr->begin();           // Point m_itr to the first entry in the map that the word to be found is in
+    while (m_itr != ptr->end()){
+        for (int i = 0; i < m_itr->second.second; i++){
+            notes_by_weight.push_back(m_itr->first);
+        }
+        m_itr++;
+    }
+    m_itr = ptr->begin();           // Reset m_itr to start of map
+    MTRand mtrand_autoseed;
+    int random = mtrand_autoseed.randInt(notes_by_weight.size()-1);// Use size-1, else the range will be size + 1 (from 0 to size)
+    if (seed_phrase.size() < order){
+        seed_phrase.push_back(notes_by_weight[random]);
+    }
+    if (seed_phrase.size() == order){
+        seed_phrase.push_back(notes_by_weight[random]);
+        seed_phrase.pop_front();
+    }
+    return notes_by_weight[random];            // Return the random note
+}
+
+int main (int argc, char** argv) {
     // Interpret the command line args:
     if (argc < 4) usage();
-
+    
     // Now parse the data into the markov data structure:
     std::string markov_file = argv[1];
     std::string out_midi = argv[2];
-    int window = argv[3] + 1;
+    int window = atoi(argv[3]) + 1;
     BuildingBlock root_head;
     LoadNotes(root_head, markov_file, window);
-    std::cerr << "Loaded " << filename << " with order = " <<
+    std::cerr << "Loaded " << markov_file << " with order = " <<
     window-1  << '\n' << std::endl;
-    std::list<Note> seed_phrase;// This list will hold the notes that are the lookup keys to be followed before getting the next note
-    std::vector<Note> = runMarkovChain(root_head, seed_phrase, mode);
+    std::string mode;
+    std::vector<Note> track = runMarkovChain(root_head, window-1, mode);
+    // Now compile all the notes into a midi file
 }
 
 //#############################################################################################################
