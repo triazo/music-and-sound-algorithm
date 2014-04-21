@@ -7,8 +7,15 @@
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
+#include "event.h"
+#include "mchain.h"
 #include "Pint.h"
 #include "MersenneTwister.h"
+#if defined(OS_MACOSX)
+#include <endian.h>
+#else
+#include "endian.h"
+#endif
 
 typedef std::map<Note, Pint> BuildingBlock;
 
@@ -19,10 +26,114 @@ void add_to_data_head(const std::list<std::string>& words, BuildingBlock& data_h
 void LoadNotes(BuildingBlock& data_head, const std::string &filename, int window);
 void recursively_destroy(BuildingBlock* data_pointer);
 void empty_data(BuildingBlock& data_head);
+void writeMidiFile(std::string outfile, const std::vector<Note>& notes);
+void compile_track(const vector<chanEvent> & track, ofstream & midifile);
+void makeTrack(int& bytes, std::ofstream& midifile);
 void usage();
 
+void compile_track(const vector<chanEvent> & track, ofstream & midifile){
+    for (int i = 0; i < track.size(); i++){
+        midifile.write(track[i].getMidi().c_str(),track[i].getBytes());
+    }
+    int endOfTrack = 0x00FF2F00;
+    midifile.write((char*)&endOfTrack,4);
+}
+
+void makeTrack(int& bytes, std::ofstream& midifile){
+    // Start the Track
+    midifile.write("MTrk", 4);
+    // Output a sample size (number of bytes)
+    int trackLength = htobe32(bytes);
+    midifile.write((char*)& trackLength, 4);
+}
+
+void writeMidiFile(std::string outfile, const std::vector<Note>& notes){
+    // Make midifile out-stream to write to
+    std::ofstream midifile(outfile, std::ios::out | std::ios::binary);
+    midifile.seekp (0);
+    // The header for a midi file
+    midifile.write("MThd",4);
+    // Length of 6
+    int length = htobe32(6);
+    // Tricking the compiler to typecast the length (previous line) to char array
+    midifile.write((char*)&length, 4);
+    // Header set-up information processing
+    short tracktype = htobe16(0);
+    short trackcount = htobe16(1);
+    // Tricking the compiler again...won't label further tricks
+    midifile.write((char*)& tracktype, 2);
+    // Number of tracks (if tracktype == 0, must be 1)
+    midifile.write((char*)& trackcount, 2);
+    // Number of ticks per quarter note (used by delta-time, tempo determined later?)
+    short ticksperbeat = htobe16(64);
+    midifile.write((char*)& ticksperbeat, 2);
+    std::cout << "Ticks per quarter note has been set to a default value of 64" << std::endl;
+    // Make the tracks, with their events:
+    std::cout << "Running chain..." << endl;
+    vector<chanEvent> track;
+    for (int i = 0; i < notes.size(); i++){// Turn the notes to channel events
+        track.push_back(chanEvent(notes[i].note, notes[i].velocity, 0, 0, 1));
+        track.push_back(chanEvent(notes[i].note, notes[i].velocity, notes[i].duration, 0, 0));
+    }
+    length = 0;
+    for (int i = 0; i < track.size(); i++)
+        length += track[i].getBytes();
+    length += 4;
+    makeTrack(length, midifile);
+    compile_track(track, midifile);
+    midifile.close();
+}
 
 
+int main (int argc, char** argv) {
+    // Interpret the command line args:
+    if (argc < 4) usage();
+    
+    // Now parse the data into the markov data structure:
+    std::string markov_file = argv[1];
+    std::string out_midi = argv[2];
+    int window = atoi(argv[3]) + 1;
+    BuildingBlock root_head;
+    LoadNotes(root_head, markov_file, window);
+    std::cerr << "Loaded " << markov_file << " with order = " <<
+    window-1  << '\n' << std::endl;
+    std::string mode;
+    std::vector<Note> track = runMarkovChain(root_head, window-1, mode);
+    // Now compile all the notes into a midi file
+    writeMidiFile(out_midi, track);
+    
+}
+
+//#############################################################################################################
+// Finished code, no changes needed:
+
+void usage(){
+    std::cout << "program_name input_markov_file midi_outfile markov_order -options" << std::endl;
+}
+
+// Head function to return all heap memory from data container
+void empty_data(BuildingBlock& data_head){
+    BuildingBlock::iterator m_itr = data_head.begin();
+    for (m_itr; m_itr != data_head.end(); m_itr++){
+        if (m_itr->second.first != NULL){// If the pointer leads somewhere...
+            recursively_destroy(m_itr->second.first);// Release the hounds!
+        }
+    }
+}
+
+// Recursive helper function to return heap memory from data conatiner
+void recursively_destroy(BuildingBlock* data_pointer){
+    if (data_pointer != NULL){
+        BuildingBlock::iterator m_itr = data_pointer->begin();
+        for (m_itr; m_itr != data_pointer->end(); m_itr++){
+            if (m_itr->second.first != NULL){// If the pointer leads somewhere...
+                recursively_destroy(m_itr->second.first);// Recurse!
+            }
+        }
+        delete data_pointer;// Once all sub-pointers are deleted, delete this one
+    }
+    // If the pointer is NULL, nothing happens
+}
 
 void add_to_data_head(const std::list<Note>& notes, BuildingBlock& data_head){
     std::list<Note>::const_iterator itr = notes.begin();
@@ -134,54 +245,4 @@ Note getNextNote(BuildingBlock& data_head, std::list<Note> seed_phrase, int orde
         seed_phrase.pop_front();
     }
     return notes_by_weight[random];            // Return the random note
-}
-
-int main (int argc, char** argv) {
-    // Interpret the command line args:
-    if (argc < 4) usage();
-    
-    // Now parse the data into the markov data structure:
-    std::string markov_file = argv[1];
-    std::string out_midi = argv[2];
-    int window = atoi(argv[3]) + 1;
-    BuildingBlock root_head;
-    LoadNotes(root_head, markov_file, window);
-    std::cerr << "Loaded " << markov_file << " with order = " <<
-    window-1  << '\n' << std::endl;
-    std::string mode;
-    std::vector<Note> track = runMarkovChain(root_head, window-1, mode);
-    // Now compile all the notes into a midi file
-}
-
-//#############################################################################################################
-// Finished code, no changes needed:
-
-void usage(){
-    std::cout << "program_name input_markov_file midi_outfile markov_order -options" << std::endl;
-}
-
-
-
-// Head function to return all heap memory from data container
-void empty_data(BuildingBlock& data_head){
-    BuildingBlock::iterator m_itr = data_head.begin();
-    for (m_itr; m_itr != data_head.end(); m_itr++){
-        if (m_itr->second.first != NULL){// If the pointer leads somewhere...
-            recursively_destroy(m_itr->second.first);// Release the hounds!
-        }
-    }
-}
-
-// Recursive helper function to return heap memory from data conatiner
-void recursively_destroy(BuildingBlock* data_pointer){
-    if (data_pointer != NULL){
-        BuildingBlock::iterator m_itr = data_pointer->begin();
-        for (m_itr; m_itr != data_pointer->end(); m_itr++){
-            if (m_itr->second.first != NULL){// If the pointer leads somewhere...
-                recursively_destroy(m_itr->second.first);// Recurse!
-            }
-        }
-        delete data_pointer;// Once all sub-pointers are deleted, delete this one
-    }
-    // If the pointer is NULL, nothing happens
 }
