@@ -71,3 +71,5 @@ int chanEvent::getBytes() const {
     bytes += 3;
     return bytes;
 }
+
+

@@ -7,16 +7,31 @@
 #include <iomanip>
 #include <fstream>
 #include <list>
+#include <map>
 #if defined(OS_MACOSX)
 #include <endian.h>
 #else
 #include "endian.h"
 #endif
 
-#include "event.h"
 
 void usage(char** argv);
-void readtrack(std::ifstream& midifile, std::list<Event*>& events);
+void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out);
+
+
+std::string string_to_hex(char* s, size_t len) {
+    static const char* const lut = "0123456789ABCDEF";
+    //size_t len = input.length();
+
+    std::string output;
+    output.reserve(2 * len);
+    for (size_t i = 0; i < len; ++i) {
+        const unsigned char c = s[i];
+        output.push_back(lut[c >> 4]);
+        output.push_back(lut[c & 15]);
+    }
+    return output;
+}
 
 int main(int argc, char** argv) {
     // open file in binary mode for reading
@@ -34,7 +49,12 @@ int main(int argc, char** argv) {
         std::cerr << "Cannot open " << argv[1] << std::endl;
         usage(argv);
     }
-        
+
+    std::ofstream out(argv[2]);
+    if (!out) {
+        std::cerr << "Cannot open " << argv[1] << " for writing" << std::endl;
+        usage(argv);
+    }
 
     // Begin the reading in of the file
     char head[4];
@@ -64,16 +84,16 @@ int main(int argc, char** argv) {
     midifile.read(shortint, 2);
 
     short int fileformat = be16toh(*(short int*)shortint);
-    if (fileformat != 0) {
-        std::cerr << "Multiple tracks not supported" << std::endl;
-        usage(argv);
-        exit(1);
-    }
+    // if (fileformat != 0) {
+    //     std::cerr << "Multiple tracks not supported" << std::endl;
+    //     usage(argv);
+    //     exit(1);
+    // }
 
     // Then comes the number of tracks
     midifile.read(shortint, 2);
     short int numtracks = be16toh(*(short int*)shortint);
-    if (numtracks > 1) {
+    if (numtracks > 100) {
         std::cerr << "Multiple tracks not supported" << std::endl;
         std::cout << numtracks << std::endl;
         usage(argv);
@@ -84,9 +104,10 @@ int main(int argc, char** argv) {
     midifile.read(shortint, 2);
     short int dtimeticksperqnote = be16toh(*(short int*)shortint);
 
-    std::list<Event*> events;
-    readtrack(midifile, events);
-    
+
+    for (int i=0; i < numtracks; i++) {
+        readtrack(midifile, dtimeticksperqnote, out);
+    }
     
 }
 
@@ -94,8 +115,15 @@ void usage (char* argv[]) {
     std::cout << "Usage: " << argv[0] << " out_file " << "markov_file" << std::endl;
 }
 
+// Puts  the delta time in terms of 64
+int normDeltime(int deltime, int t) {
+    return((deltime * 64) / t);
+}
 
-void readtrack(std::ifstream& midifile, std::list<Event*>& events) {
+
+void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) {
+    char notes[12][3] = {"C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"};
+    
     // Read a track header
     char head[4];
     midifile.read(head, 4);
@@ -114,6 +142,9 @@ void readtrack(std::ifstream& midifile, std::list<Event*>& events) {
 
     // Start the event loop
     int trackread = 0;
+    std::map<int, int> playing;
+    int curtime = 0;
+    int eventtype, channel;
     while (trackread < tracksize) {
         
         // Loop for deltatime
@@ -121,20 +152,81 @@ void readtrack(std::ifstream& midifile, std::list<Event*>& events) {
         char c = 0;
         midifile.read(&c, 1);
         trackread++;
+        deltime = deltime | (c & 127);
         // In the case of the first bit being zero, this will not enter the loop
-        while (c > 127) {
+        while (c < 0) {
             deltime <<= 7;
             deltime = deltime | (c & 127);
             midifile.read(&c, 1);
             trackread++;
         }
-        
+
+        // Keep a running count of the total time
+        curtime += deltime;
         
         // Event type and channel number are both a single nyble
         midifile.read(&c, 1);
         trackread++;
-        int eventtype = (c & 240) >> 4;
-        int channel = (c & 15);
+        // Do a check for running statuses
+        int prevevent = eventtype;
+        int prevchannel = channel;
+        eventtype = (c & 240) >> 4;
+        channel = (c & 15);
+        if (eventtype < 8) {
+            midifile.putback(c);
+            trackread--;
+            eventtype = prevevent;
+            channel = prevchannel;
+        }
+
+        // Test if meta event
+        if (eventtype == 15 && channel == 15) {
+            
+            // Read in the metaevent type
+            midifile.read(&c, 1);
+            trackread++;
+            int type = c;
+
+
+            // Read in the metaevent size
+            midifile.read(&c, 1);
+            trackread++;
+            int datasize = c;
+
+            // Read in (and discard) the data
+            char buf[datasize];
+            midifile.read(buf, datasize);
+            trackread += datasize;
+
+            if (type = 47) {
+                out << "EOT -1 -1 -1" << std::endl;
+            }
+            else std::cerr << "Ignoring Meta Event: type="
+                           << type
+                           << ", size=" << datasize
+                           << ", data=" << string_to_hex(buf,datasize) << std::endl;
+            
+            continue;
+        }
+
+        // These event types only have
+        if (eventtype == 12 || eventtype == 13) {
+            std::cerr << "Event type not supported: " << eventtype << std::endl;
+            midifile.read(&c, 1);
+            trackread++;
+            continue;
+        }
+
+        
+        // if (eventtype == 0) {
+        //     midifile.read(&c, 1);
+        //     trackread++;
+        //     std::cerr << string_to_hex(&c,1) << std::endl;
+        //     eventtype = (c & 240) >> 4;
+        // }
+            
+                
+            
         
         // Note number and velocity are a whole byte
         midifile.read(&c, 1);
@@ -144,9 +236,46 @@ void readtrack(std::ifstream& midifile, std::list<Event*>& events) {
         trackread++;
         int velocity = c;
 
-        Event* event = new chanEvent(notenumber, velocity, deltime, channel, eventtype - 8);
-        events.push_back(event);
+
+        // Code for outputting and sorting the events
         
+        
+        // Note off event
+        if (eventtype == 8 || (eventtype == 9 && velocity == 0)) {
+            std::map<int, int>::iterator start = playing.find(notenumber);
+            if (start == playing.end()) {
+                int length = normDeltime(curtime - start->second, ticksperquarter);
+                std::cerr << "Unknown note termination: "
+                          << notes[notenumber%12] << notenumber/12 << length << " "
+                          << notenumber << " "
+                          << length << " "
+                          << velocity
+                          << std::endl;
+                continue;
+            }
+
+            int length = normDeltime(curtime - start->second, ticksperquarter);
+            out << notes[notenumber%12] << notenumber/12 << length << " "
+                << notenumber << " "
+                << length << " "
+                << "100"
+                << std::endl;
+            playing.erase(start);
+        }
+        else if (eventtype == 9) {
+            // Insert into map
+            std::cerr << "Note on event: " << notes[notenumber%12]<<notenumber/12 << std::endl;
+            if (!playing.insert(std::make_pair(notenumber, curtime)).second) {
+                std::cerr << "This note is already playing: "
+                          << notes[notenumber%12] << notenumber/12 << "--" << " "
+                          << notenumber << " "
+                          << "--" << " "
+                          << velocity
+                          << std::endl;
+            }
+        }
+        else
+            std::cerr << "Event type not supported: " << eventtype<< std::endl;        
     }
-    
+
 }
