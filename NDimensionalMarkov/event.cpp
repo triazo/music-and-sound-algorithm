@@ -59,9 +59,11 @@ std::string chanEvent::getMidi() const {
 int chanEvent::getBytes() const {
     int bytes = 0;
     if (deltime == 0) {
+        std::cout << "Found start of note event with deltime 0" << std::endl;
         bytes = 1;
     }
     else {
+        std::cout << "Found start of note event with deltime " << deltime << std::endl;
         int delTemp = deltime;
         while (delTemp != 0) {
             delTemp >>= 7;
@@ -69,6 +71,7 @@ int chanEvent::getBytes() const {
         }
     }
     bytes += 3;
+    std::cout << "Outputted size as 1 byte" << std::endl;
     return bytes;
 }
 
