@@ -31,10 +31,14 @@ public:
 
 class Note{
 public:
-    Note(string name, int note, int duration, int velocity):  {}
+    Note(string name_, int note_, int duration_, int velocity_):
+    note(note_), duration(duration_), velocity(velocity_), name(name_) {}
     // Representation:
     int note, duration, velocity;
     string name;
 };
+bool operator<(const Note& n1, const Note& n2){
+    return ((n2.name > n1.name && n2.velocity > n1.velocity) || (n2.velocity == n1.velocity && n2.name > n1.name));
+}
 
 #endif /* defined(__Homework_7__Data__) */
