@@ -33,6 +33,8 @@ std::string string_to_hex(char* s, size_t len) {
     return output;
 }
 
+int tempo = 500000;
+
 int main(int argc, char** argv) {
     // open file in binary mode for reading
     if (argc < 3) {
@@ -112,12 +114,13 @@ int main(int argc, char** argv) {
 }
 
 void usage (char* argv[]) {
-    std::cout << "Usage: " << argv[0] << " out_file " << "markov_file" << std::endl;
+    std::cout << "Usage: " << argv[0] << " midi_file " << "notes_file" << std::endl;
 }
 
 // Puts  the delta time in terms of 64
 int normDeltime(int deltime, int t) {
-    return((deltime * 64) / t);
+    int time = deltime * (tempo / t);
+    return(time / (500000 / 64));
 }
 
 
@@ -138,13 +141,14 @@ void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) 
 
     int tracksize = be32toh(*(int*)head);
     // char track[tracksize];
-    // midifile.read(track, tracksize);n
+    // midifile.read(track, tracksize);
 
     // Start the event loop
     int trackread = 0;
     std::map<int, int> playing;
     int curtime = 0;
     int eventtype, channel;
+    bool foundnote = false;
     while (trackread < tracksize) {
         
         // Loop for deltatime
@@ -163,7 +167,7 @@ void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) 
 
         // Keep a running count of the total time
         curtime += deltime;
-        
+       
         // Event type and channel number are both a single nyble
         midifile.read(&c, 1);
         trackread++;
@@ -198,8 +202,21 @@ void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) 
             midifile.read(buf, datasize);
             trackread += datasize;
 
-            if (type = 47) {
-                out << "EOT -1 -1 -1" << std::endl;
+            // Tempo
+            if (type == 81) {
+                char tempoint[4];
+                for (int i = 0; i < 3; i++)
+                    tempoint[2-i] = buf[i];
+                tempoint[3] = 0;
+                tempo = *(int*)tempoint;
+                std::cerr << "Tempo set to " << string_to_hex(buf, datasize) << std::endl;
+                std::cerr << "Tempo set to " << string_to_hex((char*)&tempo, 4) << std::endl;
+            }
+            
+            // End of track event    
+            if (type == 47) {
+                if (foundnote)
+                    out << "EOT -1 -1 -1" << std::endl;
             }
             else std::cerr << "Ignoring Meta Event: type="
                            << type
@@ -217,16 +234,6 @@ void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) 
             continue;
         }
 
-        
-        // if (eventtype == 0) {
-        //     midifile.read(&c, 1);
-        //     trackread++;
-        //     std::cerr << string_to_hex(&c,1) << std::endl;
-        //     eventtype = (c & 240) >> 4;
-        // }
-            
-                
-            
         
         // Note number and velocity are a whole byte
         midifile.read(&c, 1);
@@ -260,11 +267,12 @@ void readtrack(std::ifstream& midifile, int ticksperquarter, std::ostream& out) 
                 << length << " "
                 << "100"
                 << std::endl;
+            foundnote = true;
             playing.erase(start);
         }
         else if (eventtype == 9) {
             // Insert into map
-            std::cerr << "Note on event: " << notes[notenumber%12]<<notenumber/12 << std::endl;
+             std::cerr << "Note on event: " << notes[notenumber%12]<<notenumber/12 << std::endl;
             if (!playing.insert(std::make_pair(notenumber, curtime)).second) {
                 std::cerr << "This note is already playing: "
                           << notes[notenumber%12] << notenumber/12 << "--" << " "
