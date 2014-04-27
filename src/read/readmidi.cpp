@@ -119,8 +119,9 @@ void usage (char* argv[]) {
 
 // Puts  the delta time in terms of 64
 int normDeltime(int deltime, int t) {
-    int time = deltime * (tempo / t);
-    return(time / (500000 / 64));
+    // int time = deltime * (tempo / t);
+    // return(time / (500000 / 64));
+    return((deltime * 64) / t);
 }
 
 
